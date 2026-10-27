@@ -23,3 +23,6 @@
 .viz__historial ol { margin: 0; padding-left: 20px; max-height: 220px; overflow-y: auto; }
 .viz__fin { color: #15803d; font-weight: bold; }
 .viz pre { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: .8rem; }
+.viz__velocidad { display: flex; align-items: center; gap: 6px; font-size: .85rem; }
+/* Transición suave entre estados (solo suaviza el cambio de color; el estado lo dicta el generador). */
+.viz__svg circle, .viz__svg line { transition: fill .3s ease, stroke .3s ease, stroke-width .3s ease; }

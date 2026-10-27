@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { dfsGenerator } from '../algorithms/dfs';
 import { dfsSampleGraph, dfsSampleLayout } from '../data/sampleGraphs';
 import type { DfsNodeStatus, DfsState } from '../types/dfs';
@@ -50,6 +50,9 @@ export default function VisualizadorGrafos({
   const [estado, setEstado] = useState<DfsState | null>(null);
   const [historial, setHistorial] = useState<string[]>([]);
   const [terminado, setTerminado] = useState(false);
+  // Reproducción automática: llama a .next() cada `velocidadMs` milisegundos.
+  const [reproduciendo, setReproduciendo] = useState(false);
+  const [velocidadMs, setVelocidadMs] = useState(800);
 
   // (3) Avanzar un paso de la simulación.
   const siguientePaso = useCallback((): void => {
@@ -74,7 +77,20 @@ export default function VisualizadorGrafos({
     setEstado(null);
     setHistorial([]);
     setTerminado(false);
+    setReproduciendo(false);
   }, [graph, startNode]);
+
+  // Modo "Reproducir": el mismo generador avanza solo con un temporizador.
+  // No es una animación pregrabada: cada tick ejecuta un paso real del DFS.
+  useEffect(() => {
+    if (!reproduciendo || terminado) return undefined;
+    const id = window.setInterval(siguientePaso, velocidadMs);
+    return () => window.clearInterval(id);
+  }, [reproduciendo, terminado, velocidadMs, siguientePaso]);
+
+  useEffect(() => {
+    if (terminado) setReproduciendo(false);
+  }, [terminado]);
 
   const statusDe = (n: NodeId): DfsNodeStatus => estado?.nodeStatus[n] ?? 'no-visitado';
 
@@ -86,9 +102,27 @@ export default function VisualizadorGrafos({
         <button type="button" onClick={siguientePaso} disabled={terminado}>
           Siguiente Paso ▶
         </button>
+        <button
+          type="button"
+          onClick={() => setReproduciendo((r) => !r)}
+          disabled={terminado}
+        >
+          {reproduciendo ? 'Pausar ⏸' : 'Reproducir ⏵'}
+        </button>
         <button type="button" onClick={reiniciar}>
           Reiniciar ⟲
         </button>
+        <label className="viz__velocidad">
+          Velocidad
+          <input
+            type="range"
+            min={150}
+            max={2000}
+            step={50}
+            value={2150 - velocidadMs}
+            onChange={(e) => setVelocidadMs(2150 - Number(e.target.value))}
+          />
+        </label>
       </div>
 
       {/* --- Dibujo muy básico del grafo con SVG --- */}
