@@ -1,74 +1,18 @@
 import { useState, useRef } from 'react';
+import type { NodoTopo, AristaTopo, EstadoTopo } from '../types/ordenTopologico';
+import { topoGenerador } from '../algorithms/ordenTopologico';
 
 // ==========================================
-// 1. TIPADOS E INTERFACES
+// DATOS ESTÁTICOS DEL GRAFO (DAG)
 // ==========================================
-interface Nodo {
-    id: string;
-    x: number;
-    y: number;
-}
-
-interface Arista {
-    origen: string;
-    destino: string;
-}
-
-interface EstadoTopo {
-    nodoActual: string | null;
-    visitados: Set<string>;
-    orden: string[];
-    lineaActiva: number;
-    terminado: boolean;
-}
-
-// ==========================================
-// 2. LÓGICA DEL ALGORITMO (GENERADOR - DFS Post-orden)
-// ==========================================
-function* topoGenerador(grafo: Record<string, string[]>, nodos: string[]): Generator<EstadoTopo> {
-    const visitados = new Set<string>();
-    const orden: string[] = [];
-
-    yield { nodoActual: null, visitados: new Set(visitados), orden: [...orden], lineaActiva: 2, terminado: false };
-    yield { nodoActual: null, visitados: new Set(visitados), orden: [...orden], lineaActiva: 3, terminado: false };
-
-    function* dfs(u: string): Generator<EstadoTopo> {
-        visitados.add(u);
-        yield { nodoActual: u, visitados: new Set(visitados), orden: [...orden], lineaActiva: 6, terminado: false };
-        
-        for (const v of (grafo[u] ?? [])) {
-            yield { nodoActual: u, visitados: new Set(visitados), orden: [...orden], lineaActiva: 7, terminado: false };
-            if (!visitados.has(v)) {
-                yield { nodoActual: u, visitados: new Set(visitados), orden: [...orden], lineaActiva: 8, terminado: false };
-                yield* dfs(v);
-            }
-        }
-        orden.unshift(u);
-        yield { nodoActual: u, visitados: new Set(visitados), orden: [...orden], lineaActiva: 10, terminado: false };
-    }
-
-    for (const nodo of nodos) {
-        yield { nodoActual: nodo, visitados: new Set(visitados), orden: [...orden], lineaActiva: 12, terminado: false };
-        if (!visitados.has(nodo)) {
-            yield { nodoActual: nodo, visitados: new Set(visitados), orden: [...orden], lineaActiva: 13, terminado: false };
-            yield* dfs(nodo);
-        }
-    }
-
-    yield { nodoActual: null, visitados: new Set(visitados), orden: [...orden], lineaActiva: 0, terminado: true };
-}
-
-// ==========================================
-// 3. DATOS ESTÁTICOS DEL GRAFO (DAG)
-// ==========================================
-const nodosGrafo: Nodo[] = [
+const nodosGrafo: NodoTopo[] = [
     { id: 'A', x: 250, y: 50 },
     { id: 'B', x: 150, y: 150 },
     { id: 'C', x: 350, y: 150 },
     { id: 'D', x: 250, y: 250 }
 ];
 
-const aristasGrafo: Arista[] = [
+const aristasGrafo: AristaTopo[] = [
     { origen: 'A', destino: 'B' },
     { origen: 'A', destino: 'C' },
     { origen: 'B', destino: 'D' },
@@ -83,7 +27,7 @@ const listaAdyacencia: Record<string, string[]> = {
 };
 
 // ==========================================
-// 4. COMPONENTE REACT DE INTEGRACIÓN
+// COMPONENTE REACT DE INTEGRACIÓN
 // ==========================================
 export default function OrdenTopologico() {
     const generadorRef = useRef<Generator<EstadoTopo> | null>(null);

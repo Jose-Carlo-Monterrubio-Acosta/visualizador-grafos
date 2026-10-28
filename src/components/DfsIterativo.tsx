@@ -1,62 +1,11 @@
 import { useState, useRef } from 'react';
+import type { NodoDFS, AristaDFS, EstadoDFS } from '../types/dfsIterativo';
+import { dfsGenerador } from '../algorithms/dfsIterativo';
 
 // ==========================================
-// 1. TIPADOS E INTERFACES
+// DATOS ESTÁTICOS DEL GRAFO
 // ==========================================
-interface Nodo {
-    id: string;
-    x: number;
-    y: number;
-}
-
-interface Arista {
-    origen: string;
-    destino: string;
-}
-
-interface EstadoDFS {
-    nodoActual: string | null;
-    visitados: Set<string>;
-    pila: string[];
-    lineaActiva: number;
-    terminado: boolean;
-}
-
-// ==========================================
-// 2. LÓGICA DEL ALGORITMO (GENERADOR)
-// ==========================================
-function* dfsGenerador(grafo: Record<string, string[]>, inicio: string): Generator<EstadoDFS> {
-    const visitados = new Set<string>();
-    const pila: string[] = [inicio];
-    
-    yield { nodoActual: null, visitados: new Set(visitados), pila: [...pila], lineaActiva: 3, terminado: false };
-
-    while (pila.length > 0) {
-        yield { nodoActual: null, visitados: new Set(visitados), pila: [...pila], lineaActiva: 4, terminado: false };
-
-        const u = pila.pop()!;
-        yield { nodoActual: u, visitados: new Set(visitados), pila: [...pila], lineaActiva: 5, terminado: false };
-
-        if (!visitados.has(u)) {
-            visitados.add(u);
-            yield { nodoActual: u, visitados: new Set(visitados), pila: [...pila], lineaActiva: 7, terminado: false };
-            yield { nodoActual: u, visitados: new Set(visitados), pila: [...pila], lineaActiva: 8, terminado: false };
-
-            const vecinos = [...(grafo[u] ?? [])].reverse();
-            for (const v of vecinos) {
-                pila.push(v);
-                yield { nodoActual: u, visitados: new Set(visitados), pila: [...pila], lineaActiva: 10, terminado: false };
-            }
-        }
-    }
-    
-    yield { nodoActual: null, visitados: new Set(visitados), pila: [], lineaActiva: 0, terminado: true };
-}
-
-// ==========================================
-// 3. DATOS ESTÁTICOS DEL GRAFO
-// ==========================================
-const nodosGrafo: Nodo[] = [
+const nodosGrafo: NodoDFS[] = [
     { id: 'A', x: 250, y: 50 },
     { id: 'B', x: 150, y: 150 },
     { id: 'C', x: 350, y: 150 },
@@ -64,7 +13,7 @@ const nodosGrafo: Nodo[] = [
     { id: 'E', x: 200, y: 250 }
 ];
 
-const aristasGrafo: Arista[] = [
+const aristasGrafo: AristaDFS[] = [
     { origen: 'A', destino: 'B' },
     { origen: 'A', destino: 'C' },
     { origen: 'B', destino: 'D' },
@@ -80,7 +29,7 @@ const listaAdyacencia: Record<string, string[]> = {
 };
 
 // ==========================================
-// 4. COMPONENTE REACT DE INTEGRACIÓN
+// COMPONENTE REACT DE INTEGRACIÓN
 // ==========================================
 export default function DfsIterativo() {
     const generadorRef = useRef<Generator<EstadoDFS> | null>(null);
