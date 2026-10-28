@@ -15,6 +15,7 @@ Cada algoritmo está implementado como **función generadora** (`function*`) que
 | 3 | Bellman-Ford | ⏳ Pendiente |
 | 7 | Búsqueda en Profundidad (DFS iterativo) | ✅ Implementado |
 | 8 | Ordenamiento Topológico (DFS post-orden) | ✅ Implementado |
+| 9 | Algoritmo de Floyd-Warshall (APSP) | ✅ Implementado |
 
 ## Cómo ejecutar
 

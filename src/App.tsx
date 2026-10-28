@@ -2,9 +2,10 @@ import { useState } from 'react';
 import VisualizadorGrafos from './components/VisualizadorGrafos';
 import DfsIterativo from './components/DfsIterativo';
 import OrdenTopologico from './components/OrdenTopologico';
+import FloydWarshall from './components/FloydWarshall';
 
 export default function App() {
-    const [algoritmoActivo, setAlgoritmoActivo] = useState<'recursivo' | 'iterativo' | 'topologico'>('recursivo');
+    const [algoritmoActivo, setAlgoritmoActivo] = useState<'recursivo' | 'iterativo' | 'topologico' | 'floyd'>('recursivo');
 
     const getBtnStyle = (id: string, colorH: string) => ({
         padding: '10px 15px',
@@ -24,6 +25,7 @@ export default function App() {
                     <button onClick={() => setAlgoritmoActivo('recursivo')} style={getBtnStyle('recursivo', '#4da6ff')}>Algoritmo 1: DFS Recursivo</button>
                     <button onClick={() => setAlgoritmoActivo('iterativo')} style={getBtnStyle('iterativo', '#e06c75')}>Algoritmo 7: DFS Iterativo</button>
                     <button onClick={() => setAlgoritmoActivo('topologico')} style={getBtnStyle('topologico', '#28a745')}>Algoritmo 8: Orden Topológico</button>
+                    <button onClick={() => setAlgoritmoActivo('floyd')} style={getBtnStyle('floyd', '#e5c07b')}>Algoritmo 9: Floyd-Warshall</button>
                 </div>
             </header>
             
@@ -31,6 +33,7 @@ export default function App() {
                 {algoritmoActivo === 'recursivo' && <VisualizadorGrafos />}
                 {algoritmoActivo === 'iterativo' && <DfsIterativo />}
                 {algoritmoActivo === 'topologico' && <OrdenTopologico />}
+                {algoritmoActivo === 'floyd' && <FloydWarshall />}
             </main>
         </div>
     );
