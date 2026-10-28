@@ -14,6 +14,7 @@ Cada algoritmo está implementado como **función generadora** (`function*`) que
 | 2 | Coloreo Bipartito (BFS, 2 colores) | ⏳ Pendiente |
 | 3 | Bellman-Ford | ⏳ Pendiente |
 | 7 | Búsqueda en Profundidad (DFS iterativo) | ✅ Implementado |
+| 8 | Ordenamiento Topológico (DFS post-orden) | ✅ Implementado |
 
 ## Cómo ejecutar
 
